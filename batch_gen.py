@@ -68,7 +68,7 @@ class BatchGenerator(object):
             print("batch_target", batch_target)
 
         # Compute length of sequences for all the targets and store in a variable.
-        length_of_sequences = map(len, batch_target)
+        length_of_sequences = list(map(len, batch_target))
         print("length_of_sequences", list(length_of_sequences))
         
         # Initialize the input tensor with zeros using torch for all the examples in the batch.
@@ -90,5 +90,8 @@ class BatchGenerator(object):
             
             # Set the mask tensor to ones where we have ground-truth samples along the sequence.
             mask[i, :, :np.shape(batch_target[i])[0]] = torch.ones(self.num_classes, np.shape(batch_target[i])[0])
-
+        print("batch_input_tensor", batch_input_tensor.shape)
+        print("batch_target_tensor", batch_target_tensor.shape)
+        print("mask", mask.shape)
+        print("next_batch done")
         return batch_input_tensor, batch_target_tensor, mask
