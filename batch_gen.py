@@ -38,6 +38,7 @@ class BatchGenerator(object):
 
     # This function returns the input, output and mask tensors for the next batch of data based on the batch size.
     def next_batch(self, batch_size):
+        print("-----------------")
         print("batch_size", batch_size)
         # Take the subset of examples (video) from self.list_of_examples based on batch_size usually 1.
         batch = self.list_of_examples[self.index:self.index + batch_size]
@@ -51,7 +52,7 @@ class BatchGenerator(object):
         for vid in batch:
             # Load the features and ground-truth file for the current example using numpy.
             features = np.load(self.features_path + vid.split('.')[0] + '.npy')
-            print("features", features.shape) # Gtea features (2048 frames, 934 features)
+            print("features", features.shape) # Gtea features (2048 features, 934 frames)
             file_ptr = open(self.gt_path + vid, 'r')
             content = file_ptr.read().split('\n')[:-1]
             print("content_ground_truth", content)
