@@ -39,7 +39,7 @@ class BatchGenerator(object):
     # This function returns the input, output and mask tensors for the next batch of data based on the batch size.
     def next_batch(self, batch_size):
         print("batch_size", batch_size)
-        # Take the subset of examples from self.list_of_examples based on batch_size.
+        # Take the subset of examples (video) from self.list_of_examples based on batch_size usually 1.
         batch = self.list_of_examples[self.index:self.index + batch_size]
         self.index += batch_size # Update the pointer after taking the subset.
         
@@ -51,8 +51,10 @@ class BatchGenerator(object):
         for vid in batch:
             # Load the features and ground-truth file for the current example using numpy.
             features = np.load(self.features_path + vid.split('.')[0] + '.npy')
+            print("features", features.shape)
             file_ptr = open(self.gt_path + vid, 'r')
             content = file_ptr.read().split('\n')[:-1]
+            print("content_ground_truth", content)
             classes = np.zeros(min(np.shape(features)[1], len(content)))
             
             # Map the action words to integer labels using actions_dict for all the sentences in the ground-truth file.
@@ -65,6 +67,7 @@ class BatchGenerator(object):
 
         # Compute length of sequences for all the targets and store in a variable.
         length_of_sequences = map(len, batch_target)
+        print("length_of_sequences", length_of_sequences)
         
         # Initialize the input tensor with zeros using torch for all the examples in the batch.
         batch_input_tensor = torch.zeros(len(batch_input), np.shape(batch_input[0])[0], max(length_of_sequences), dtype=torch.float)
