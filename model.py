@@ -111,8 +111,11 @@ class Trainer:
                 _, predicted = torch.max(predictions[-1].data, 1)
                 predicted = predicted.squeeze()
                 recognition = []
+                # for i in range(len(predicted)):
+                #     recognition = np.concatenate((recognition, [actions_dict.keys()[actions_dict.values().index(predicted[i].item())]]*sample_rate))
                 for i in range(len(predicted)):
-                    recognition = np.concatenate((recognition, [actions_dict.keys()[actions_dict.values().index(predicted[i].item())]]*sample_rate))
+                    recognition = np.concatenate((recognition, [list(actions_dict.keys())[list(actions_dict.values()).index(predicted[i].item())]] * sample_rate))
+
                 f_name = vid.split('/')[-1].split('.')[0]
                 f_ptr = open(results_dir + "/" + f_name, "w")
                 f_ptr.write("### Frame level recognition: ###\n")
