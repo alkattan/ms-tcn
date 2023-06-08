@@ -51,7 +51,7 @@ class BatchGenerator(object):
         for vid in batch:
             # Load the features and ground-truth file for the current example using numpy.
             features = np.load(self.features_path + vid.split('.')[0] + '.npy')
-            print("features", features.shape)
+            print("features", features.shape) # Gtea features (2048 frames, 934 features)
             file_ptr = open(self.gt_path + vid, 'r')
             content = file_ptr.read().split('\n')[:-1]
             print("content_ground_truth", content)
@@ -63,20 +63,22 @@ class BatchGenerator(object):
                 
             # Append the features and classes lists with self.sample_rate steps as inputs and outputs respectively.
             batch_input.append(features[:, ::self.sample_rate])
-            batch_target.append(classes[::self.sample_rate])
+            batch_target.append(classes[::self.sample_rate]) # step or sample rate
+            print("batch_input", batch_input)
+            print("batch_target", batch_target)
 
         # Compute length of sequences for all the targets and store in a variable.
         length_of_sequences = map(len, batch_target)
-        print("length_of_sequences", length_of_sequences)
+        print("length_of_sequences", list(length_of_sequences))
         
         # Initialize the input tensor with zeros using torch for all the examples in the batch.
         batch_input_tensor = torch.zeros(len(batch_input), np.shape(batch_input[0])[0], max(length_of_sequences), dtype=torch.float)
         
         # Initialize the target tensor with -100 using torch for all the examples in the batch.
-        batch_target_tensor = torch.ones(len(batch_input), max(length_of_sequences, default=0), dtype=torch.long)*(-100)
+        batch_target_tensor = torch.ones(len(batch_input), max(length_of_sequences), dtype=torch.long)*(-100)
         
         # Initialize the mask tensor with zeros using torch for all the examples in the batch.
-        mask = torch.zeros(len(batch_input), self.num_classes, max(length_of_sequences, default=0), dtype=torch.float)
+        mask = torch.zeros(len(batch_input), self.num_classes, max(length_of_sequences), dtype=torch.float)
         
         # Loop through each example in the batch. 
         for i in range(len(batch_input)):
